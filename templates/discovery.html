@@ -3,7 +3,7 @@
 {% block title %}API Discovery - API Sentinel{% endblock %}
 
 {% block content %}
-<h1>🔍 API Discovery</h1>
+<h1>API Discovery</h1>
 <p style="color: var(--text-secondary); margin-bottom: 2rem;">
     Discover APIs by uploading OpenAPI/Swagger specifications or structured documentation files.
 </p>
@@ -12,7 +12,7 @@
     <!-- OpenAPI/Swagger Upload -->
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title">📄 OpenAPI/Swagger Specification</h2>
+            <h2 class="card-title">OpenAPI/Swagger Specification</h2>
         </div>
         <div class="card-body">
             <p style="margin-bottom: 1rem;">Upload an OpenAPI 3.0 or Swagger 2.0 specification file (YAML or JSON).</p>
@@ -38,7 +38,7 @@
     <!-- Documentation Upload -->
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title">📚 API Documentation</h2>
+            <h2 class="card-title">API Documentation</h2>
         </div>
         <div class="card-body">
             <p style="margin-bottom: 1rem;">Upload structured API documentation (HTML or text) to extract endpoints.</p>
@@ -70,7 +70,7 @@
 <!-- URL Discovery -->
 <div class="card mt-3">
     <div class="card-header">
-        <h2 class="card-title">🌐 Discover from URL</h2>
+        <h2 class="card-title">Discover from URL</h2>
     </div>
     <div class="card-body">
         <p style="margin-bottom: 1rem;">Fetch and parse an OpenAPI specification from a URL.</p>
@@ -98,7 +98,7 @@
 <!-- Discovery Tips -->
 <div class="card mt-3">
     <div class="card-header">
-        <h2 class="card-title">💡 Discovery Tips</h2>
+        <h2 class="card-title">Discovery Tips</h2>
     </div>
     <div class="card-body">
         <ul style="line-height: 2;">
@@ -129,16 +129,16 @@ async function uploadSpec(event) {
         const result = await response.json();
         
         if (result.success) {
-            resultDiv.innerHTML = `<div class="alert alert-success">✅ ${result.message}<br><strong>${result.endpoints_added}</strong> endpoints discovered from <strong>${result.service_name}</strong></div>`;
+            resultDiv.innerHTML = `<div class="alert alert-success">${result.message}<br><strong>${result.endpoints_added}</strong> endpoints discovered from <strong>${result.service_name}</strong></div>`;
             form.reset();
             setTimeout(() => {
                 window.location.href = '/inventory';
             }, 2000);
         } else {
-            resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${result.detail || 'Unknown error'}</div>`;
+            resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${result.detail || 'Unknown error'}</div>`;
         }
     } catch (error) {
-        resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${error}</div>`;
+        resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${error}</div>`;
     }
 }
 
@@ -160,16 +160,16 @@ async function uploadDocs(event) {
         const result = await response.json();
         
         if (result.success) {
-            resultDiv.innerHTML = `<div class="alert alert-success">✅ ${result.message}<br><strong>${result.endpoints_added}</strong> endpoints discovered</div>`;
+            resultDiv.innerHTML = `<div class="alert alert-success">${result.message}<br><strong>${result.endpoints_added}</strong> endpoints discovered</div>`;
             form.reset();
             setTimeout(() => {
                 window.location.href = '/inventory';
             }, 2000);
         } else {
-            resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${result.detail || 'Unknown error'}</div>`;
+            resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${result.detail || 'Unknown error'}</div>`;
         }
     } catch (error) {
-        resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${error}</div>`;
+        resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${error}</div>`;
     }
 }
 
@@ -191,16 +191,16 @@ async function parseUrl(event) {
         const result = await response.json();
         
         if (result.success) {
-            resultDiv.innerHTML = `<div class="alert alert-success">✅ ${result.message}<br><strong>${result.endpoints_added}</strong> endpoints discovered from <strong>${result.service_name}</strong></div>`;
+            resultDiv.innerHTML = `<div class="alert alert-success">${result.message}<br><strong>${result.endpoints_added}</strong> endpoints discovered from <strong>${result.service_name}</strong></div>`;
             form.reset();
             setTimeout(() => {
                 window.location.href = '/inventory';
             }, 2000);
         } else {
-            resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${result.detail || 'Unknown error'}</div>`;
+            resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${result.detail || 'Unknown error'}</div>`;
         }
     } catch (error) {
-        resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${error}</div>`;
+        resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${error}</div>`;
     }
 }
 </script>

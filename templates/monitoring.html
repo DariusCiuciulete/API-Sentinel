@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="flex justify-between items-center mb-3">
-    <h1>📊 API Monitoring</h1>
+    <h1>API Monitoring</h1>
     <div class="flex gap-1">
         <button onclick="runMonitoring()" class="btn btn-success" id="runBtn">Run Monitoring Now</button>
     </div>
@@ -65,9 +65,9 @@
                         <td>
                             {% if endpoint.last_result %}
                                 {% if endpoint.last_result.success %}
-                                <span class="badge badge-success">✓ Healthy</span>
+                                <span class="badge badge-success">Healthy</span>
                                 {% else %}
-                                <span class="badge badge-danger">✗ Failed</span>
+                                <span class="badge badge-danger">Failed</span>
                                 {% endif %}
                             {% else %}
                             <span class="badge badge-warning">Not Checked</span>
@@ -178,15 +178,15 @@ async function runMonitoring() {
         const result = await response.json();
         
         if (result.success) {
-            statusDiv.innerHTML = `<div class="alert alert-success">✅ ${result.message}<br>Total: ${result.total}, Successful: ${result.successful}, Failed: ${result.failed}</div>`;
+            statusDiv.innerHTML = `<div class="alert alert-success">${result.message}<br>Total: ${result.total}, Successful: ${result.successful}, Failed: ${result.failed}</div>`;
             setTimeout(() => {
                 window.location.reload();
             }, 2000);
         } else {
-            statusDiv.innerHTML = `<div class="alert alert-danger">❌ ${result.message}</div>`;
+            statusDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
         }
     } catch (error) {
-        statusDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${error}</div>`;
+        statusDiv.innerHTML = `<div class="alert alert-danger">Error: ${error}</div>`;
     } finally {
         btn.disabled = false;
         btn.textContent = 'Run Monitoring Now';
@@ -207,16 +207,16 @@ async function testEndpoint(endpointId) {
         const result = await response.json();
         
         if (result.success) {
-            statusDiv.innerHTML = `<div class="alert alert-success">✅ Test successful<br>Status: ${result.status_code}, Response Time: ${result.response_time_ms.toFixed(2)}ms</div>`;
+            statusDiv.innerHTML = `<div class="alert alert-success">Test successful<br>Status: ${result.status_code}, Response Time: ${result.response_time_ms.toFixed(2)}ms</div>`;
         } else {
-            statusDiv.innerHTML = `<div class="alert alert-danger">❌ Test failed: ${result.error || 'Unknown error'}</div>`;
+            statusDiv.innerHTML = `<div class="alert alert-danger">Test failed: ${result.error || 'Unknown error'}</div>`;
         }
         
         setTimeout(() => {
             statusDiv.style.display = 'none';
         }, 5000);
     } catch (error) {
-        statusDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${error}</div>`;
+        statusDiv.innerHTML = `<div class="alert alert-danger">Error: ${error}</div>`;
     }
 }
 

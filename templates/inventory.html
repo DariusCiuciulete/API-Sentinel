@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="flex justify-between items-center mb-3">
-    <h1>📋 API Inventory</h1>
+    <h1>API Inventory</h1>
     <div class="flex gap-1">
         <a href="/inventory/export" class="btn btn-secondary btn-sm">Export CSV</a>
         <button onclick="showAddModal()" class="btn btn-primary btn-sm">Add Endpoint</button>
@@ -72,7 +72,6 @@
                         <td>
                             <div class="flex gap-1">
                                 <button onclick="toggleEndpoint({{ endpoint.id }})" class="btn btn-sm btn-secondary">Toggle</button>
-                                <a href="/monitoring/test/{{ endpoint.id }}" class="btn btn-sm btn-primary">Test</a>
                                 <button onclick="editEndpoint({{ endpoint.id }})" class="btn btn-sm btn-secondary">Edit</button>
                                 <button onclick="deleteEndpoint({{ endpoint.id }})" class="btn btn-sm btn-danger">Delete</button>
                             </div>
