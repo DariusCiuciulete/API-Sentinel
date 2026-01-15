@@ -1,0 +1,92 @@
+openapi: 3.0.0
+info:
+  title: Mock API for Testing
+  version: 1.0.0
+  description: A mock API server for testing API Sentinel monitoring features
+servers:
+  - url: http://127.0.0.1:8001
+paths:
+  /:
+    get:
+      summary: Root endpoint
+      responses:
+        '200':
+          description: Server is running
+  /health:
+    get:
+      summary: Health check
+      description: Always returns healthy status
+      responses:
+        '200':
+          description: Server is healthy
+  /api/users:
+    get:
+      summary: List all users
+      description: Returns a list of users (fast response)
+      responses:
+        '200':
+          description: Successful response
+    post:
+      summary: Create a user
+      responses:
+        '200':
+          description: User created
+  /api/users/{user_id}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User found
+        '404':
+          description: User not found
+  /api/products:
+    get:
+      summary: List all products
+      responses:
+        '200':
+          description: Successful response
+  /api/slow:
+    get:
+      summary: Slow endpoint
+      description: Takes 2 seconds to respond (tests latency threshold)
+      responses:
+        '200':
+          description: Delayed response
+  /api/random-delay:
+    get:
+      summary: Random delay endpoint
+      description: Takes 0-3 seconds to respond randomly
+      responses:
+        '200':
+          description: Delayed response
+  /api/random-fail:
+    get:
+      summary: Random failure endpoint
+      description: Fails 30% of the time (tests error rate threshold)
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Random failure
+  /api/sometimes-fail:
+    get:
+      summary: Intermittent failure endpoint
+      description: Fails every 3rd request
+      responses:
+        '200':
+          description: Success
+        '503':
+          description: Service temporarily unavailable
+  /api/timeout:
+    get:
+      summary: Timeout endpoint
+      description: Takes 60 seconds to respond (will timeout)
+      responses:
+        '200':
+          description: Very delayed response

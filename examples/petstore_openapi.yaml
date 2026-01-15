@@ -1,0 +1,119 @@
+openapi: 3.0.0
+info:
+  title: Petstore API
+  version: 1.0.0
+  description: A sample pet store API for testing API Sentinel
+servers:
+  - url: https://petstore.example.com/api/v1
+paths:
+  /pets:
+    get:
+      summary: List all pets
+      description: Returns a list of all pets in the store
+      responses:
+        '200':
+          description: Successful response
+    post:
+      summary: Create a pet
+      description: Add a new pet to the store
+      responses:
+        '201':
+          description: Pet created
+  /pets/{petId}:
+    get:
+      summary: Get a pet by ID
+      description: Returns details of a specific pet
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Pet not found
+    put:
+      summary: Update a pet
+      description: Update an existing pet's information
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pet updated
+        '404':
+          description: Pet not found
+    delete:
+      summary: Delete a pet
+      description: Remove a pet from the store
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Pet deleted
+        '404':
+          description: Pet not found
+  /pets/{petId}/photos:
+    get:
+      summary: Get pet photos
+      description: Returns all photos of a specific pet
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+  /categories:
+    get:
+      summary: List pet categories
+      description: Returns all available pet categories
+      responses:
+        '200':
+          description: Successful response
+  /store/inventory:
+    get:
+      summary: Get store inventory
+      description: Returns current inventory status
+      responses:
+        '200':
+          description: Successful response
+  /store/orders:
+    post:
+      summary: Place an order
+      description: Create a new order for pets
+      responses:
+        '201':
+          description: Order created
+  /store/orders/{orderId}:
+    get:
+      summary: Get order by ID
+      description: Returns details of a specific order
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Order not found
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      in: header
+      name: X-API-Key

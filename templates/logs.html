@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Logs & Reports - API Sentinel{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-3">
+    <h1>📝 Logs & Reports</h1>
+    <div class="flex gap-1">
+        <a href="/logs/export/csv?limit=1000" class="btn btn-secondary btn-sm">Export CSV</a>
+        <a href="/logs/export/json?limit=1000" class="btn btn-secondary btn-sm">Export JSON</a>
+        <a href="/logs/export/monitoring-report?format=json" class="btn btn-primary btn-sm">Monitoring Report</a>
+    </div>
+</div>
+
+<!-- Log Statistics -->
+<div class="grid grid-4 mb-3">
+    <div class="card stat-card">
+        <div class="stat-label">Total Events</div>
+        <div class="stat-value">{{ logs|length }}</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-label">Discovery Events</div>
+        <div class="stat-value">{{ event_type_counts.get('DISCOVERY', 0) }}</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-label">Monitoring Events</div>
+        <div class="stat-value">{{ event_type_counts.get('MONITORING', 0) }}</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-label">Alert Events</div>
+        <div class="stat-value">{{ event_type_counts.get('ALERT', 0) }}</div>
+    </div>
+</div>
+
+<!-- Filter Options -->
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" action="/logs" class="flex gap-1 items-center">
+            <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                <label class="form-label">Filter by Event Type</label>
+                <select name="event_type" class="form-control">
+                    <option value="">All Events</option>
+                    <option value="DISCOVERY" {% if event_type_filter == 'DISCOVERY' %}selected{% endif %}>Discovery</option>
+                    <option value="MONITORING" {% if event_type_filter == 'MONITORING' %}selected{% endif %}>Monitoring</option>
+                    <option value="ALERT" {% if event_type_filter == 'ALERT' %}selected{% endif %}>Alerts</option>
+                    <option value="INVENTORY" {% if event_type_filter == 'INVENTORY' %}selected{% endif %}>Inventory</option>
+                    <option value="EXPORT" {% if event_type_filter == 'EXPORT' %}selected{% endif %}>Export</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Limit</label>
+                <input type="number" name="limit" class="form-control" value="{{ limit }}" min="10" max="1000">
+            </div>
+            
+            <div style="padding-top: 1.5rem;">
+                <button type="submit" class="btn btn-primary">Apply Filter</button>
+                <a href="/logs" class="btn btn-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Logs Table -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Event Logs</h2>
+    </div>
+    <div class="card-body">
+        {% if logs %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Type</th>
+                        <th>Severity</th>
+                        <th>Service</th>
+                        <th>Endpoint</th>
+                        <th>Message</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td><small>{{ log.created_at }}</small></td>
+                        <td><span class="badge badge-info">{{ log.event_type }}</span></td>
+                        <td>
+                            {% if log.severity == 'ERROR' or log.severity == 'WARNING' %}
+                            <span class="badge badge-warning">{{ log.severity }}</span>
+                            {% else %}
+                            <span class="badge badge-success">{{ log.severity }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ log.service_name or '-' }}</td>
+                        <td>
+                            {% if log.path %}
+                            <code>{{ log.path }}</code>
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        <td>{{ log.message }}</td>
+                        <td>
+                            {% if log.details %}
+                            <small style="color: var(--text-secondary);">{{ log.details }}</small>
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center" style="color: var(--text-secondary); padding: 2rem;">
+            No logs found matching the filter criteria.
+        </p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Reports Section -->
+<div class="card mt-3">
+    <div class="card-header">
+        <h2 class="card-title">📊 Available Reports</h2>
+    </div>
+    <div class="card-body">
+        <div class="grid grid-2">
+            <div>
+                <h3>Monitoring Report</h3>
+                <p>Comprehensive monitoring statistics including per-endpoint availability, response times, and error rates.</p>
+                <div class="flex gap-1">
+                    <a href="/logs/export/monitoring-report?format=json" class="btn btn-primary btn-sm">Download JSON</a>
+                    <a href="/logs/export/monitoring-report?format=csv" class="btn btn-secondary btn-sm">Download CSV</a>
+                </div>
+            </div>
+            
+            <div>
+                <h3>Event Logs Export</h3>
+                <p>Complete system event logs including discovery, monitoring, alerts, and inventory operations.</p>
+                <div class="flex gap-1">
+                    <a href="/logs/export/json?limit=1000" class="btn btn-primary btn-sm">Download JSON</a>
+                    <a href="/logs/export/csv?limit=1000" class="btn btn-secondary btn-sm">Download CSV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

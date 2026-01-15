@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}API Discovery - API Sentinel{% endblock %}
+
+{% block content %}
+<h1>🔍 API Discovery</h1>
+<p style="color: var(--text-secondary); margin-bottom: 2rem;">
+    Discover APIs by uploading OpenAPI/Swagger specifications or structured documentation files.
+</p>
+
+<div class="grid grid-2">
+    <!-- OpenAPI/Swagger Upload -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">📄 OpenAPI/Swagger Specification</h2>
+        </div>
+        <div class="card-body">
+            <p style="margin-bottom: 1rem;">Upload an OpenAPI 3.0 or Swagger 2.0 specification file (YAML or JSON).</p>
+            
+            <form id="specForm" onsubmit="uploadSpec(event)">
+                <div class="form-group">
+                    <label class="form-label">Service Name (optional)</label>
+                    <input type="text" name="service_name" class="form-control" placeholder="Will be extracted from spec if not provided">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Specification File</label>
+                    <input type="file" name="file" class="form-control" accept=".yaml,.yml,.json" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Parse Specification</button>
+            </form>
+            
+            <div id="specResult" class="mt-2" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Documentation Upload -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">📚 API Documentation</h2>
+        </div>
+        <div class="card-body">
+            <p style="margin-bottom: 1rem;">Upload structured API documentation (HTML or text) to extract endpoints.</p>
+            
+            <form id="docsForm" onsubmit="uploadDocs(event)">
+                <div class="form-group">
+                    <label class="form-label">Service Name</label>
+                    <input type="text" name="service_name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Base URL</label>
+                    <input type="url" name="base_url" class="form-control" required placeholder="https://api.example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Documentation File</label>
+                    <input type="file" name="file" class="form-control" accept=".html,.txt,.md" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Parse Documentation</button>
+            </form>
+            
+            <div id="docsResult" class="mt-2" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- URL Discovery -->
+<div class="card mt-3">
+    <div class="card-header">
+        <h2 class="card-title">🌐 Discover from URL</h2>
+    </div>
+    <div class="card-body">
+        <p style="margin-bottom: 1rem;">Fetch and parse an OpenAPI specification from a URL.</p>
+        
+        <form id="urlForm" onsubmit="parseUrl(event)">
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="form-label">Specification URL</label>
+                    <input type="url" name="url" class="form-control" required placeholder="https://api.example.com/openapi.json">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Service Name (optional)</label>
+                    <input type="text" name="service_name" class="form-control">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Fetch and Parse</button>
+        </form>
+        
+        <div id="urlResult" class="mt-2" style="display: none;"></div>
+    </div>
+</div>
+
+<!-- Discovery Tips -->
+<div class="card mt-3">
+    <div class="card-header">
+        <h2 class="card-title">💡 Discovery Tips</h2>
+    </div>
+    <div class="card-body">
+        <ul style="line-height: 2;">
+            <li><strong>OpenAPI/Swagger:</strong> Best for APIs with formal specifications. Extracts complete endpoint details including methods, paths, and authentication.</li>
+            <li><strong>Documentation:</strong> Use when specs aren't available. Works with HTML docs containing endpoint examples (e.g., "GET /api/users").</li>
+            <li><strong>URL Discovery:</strong> Ideal for public APIs that expose their OpenAPI spec at a known URL (common pattern: /openapi.json or /swagger.json).</li>
+            <li><strong>Manual Entry:</strong> For single endpoints or when automated discovery isn't possible, use <a href="/inventory">Inventory → Add Endpoint</a>.</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+async function uploadSpec(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const resultDiv = document.getElementById('specResult');
+    
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<div class="alert alert-info">Processing specification...</div>';
+    
+    try {
+        const response = await fetch('/discovery/upload-spec', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            resultDiv.innerHTML = `<div class="alert alert-success">✅ ${result.message}<br><strong>${result.endpoints_added}</strong> endpoints discovered from <strong>${result.service_name}</strong></div>`;
+            form.reset();
+            setTimeout(() => {
+                window.location.href = '/inventory';
+            }, 2000);
+        } else {
+            resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${result.detail || 'Unknown error'}</div>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${error}</div>`;
+    }
+}
+
+async function uploadDocs(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const resultDiv = document.getElementById('docsResult');
+    
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<div class="alert alert-info">Processing documentation...</div>';
+    
+    try {
+        const response = await fetch('/discovery/upload-docs', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            resultDiv.innerHTML = `<div class="alert alert-success">✅ ${result.message}<br><strong>${result.endpoints_added}</strong> endpoints discovered</div>`;
+            form.reset();
+            setTimeout(() => {
+                window.location.href = '/inventory';
+            }, 2000);
+        } else {
+            resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${result.detail || 'Unknown error'}</div>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${error}</div>`;
+    }
+}
+
+async function parseUrl(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const resultDiv = document.getElementById('urlResult');
+    
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<div class="alert alert-info">Fetching specification from URL...</div>';
+    
+    try {
+        const response = await fetch('/discovery/parse-url', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            resultDiv.innerHTML = `<div class="alert alert-success">✅ ${result.message}<br><strong>${result.endpoints_added}</strong> endpoints discovered from <strong>${result.service_name}</strong></div>`;
+            form.reset();
+            setTimeout(() => {
+                window.location.href = '/inventory';
+            }, 2000);
+        } else {
+            resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${result.detail || 'Unknown error'}</div>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${error}</div>`;
+    }
+}
+</script>
+{% endblock %}

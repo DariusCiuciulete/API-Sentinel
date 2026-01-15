@@ -1,0 +1,76 @@
+openapi: 3.0.0
+info:
+  title: My Real MockAPI
+  version: 1.0.0
+  description: Real working API for testing API Sentinel
+servers:
+  - url: https://6968fd2469178471522c3364.mockapi.io
+paths:
+  /test/vp/users:
+    get:
+      summary: Get all users from MockAPI
+      responses:
+        '200':
+          description: Success
+    post:
+      summary: Create a new user
+      responses:
+        '201':
+          description: Created
+  /test/vp/users/{id}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+    put:
+      summary: Update user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted
+  /test/vp/products:
+    get:
+      summary: Get all products
+      responses:
+        '200':
+          description: Success
+    post:
+      summary: Create a product
+      responses:
+        '201':
+          description: Created
+  /test/vp/products/{id}:
+    get:
+      summary: Get product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success

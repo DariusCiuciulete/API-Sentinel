@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title: JSONPlaceholder Public API
+  version: 1.0.0
+  description: Free fake REST API for testing
+servers:
+  - url: https://jsonplaceholder.typicode.com
+paths:
+  /posts:
+    get:
+      summary: Get all posts
+      responses:
+        '200':
+          description: Success
+  /posts/1:
+    get:
+      summary: Get post by ID
+      responses:
+        '200':
+          description: Success
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        '200':
+          description: Success
+  /users/1:
+    get:
+      summary: Get user by ID
+      responses:
+        '200':
+          description: Success
+  /comments:
+    get:
+      summary: Get all comments
+      responses:
+        '200':
+          description: Success
+  /albums:
+    get:
+      summary: Get all albums
+      responses:
+        '200':
+          description: Success
+  /photos:
+    get:
+      summary: Get all photos
+      responses:
+        '200':
+          description: Success
+  /todos:
+    get:
+      summary: Get all todos
+      responses:
+        '200':
+          description: Success
