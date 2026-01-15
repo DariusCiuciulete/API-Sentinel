@@ -34,13 +34,12 @@ app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="stat
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 # Import and include routers
-from app.routers import inventory, discovery, monitoring, alerts, logs
+from app.routers import inventory, discovery, monitoring
+# Alerts and Logs modules will be added in future release
 
 app.include_router(inventory.router)
 app.include_router(discovery.router)
 app.include_router(monitoring.router)
-app.include_router(alerts.router)
-app.include_router(logs.router)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -51,26 +50,18 @@ async def home(request: Request):
     # Get dashboard statistics
     stats = db.get_dashboard_stats()
     
-    # Get active alerts
-    alerts = db.get_active_alerts()
-    
     # Get endpoints
     endpoints = db.get_all_endpoints(active_only=False)
     
     # Get monitoring stats
     monitoring_stats = db.get_monitoring_stats()
     
-    # Get recent logs
-    recent_logs = db.get_logs(limit=5)
-    
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
         "title": "API Sentinel Dashboard",
         "stats": stats,
-        "alerts": alerts,
         "endpoints": endpoints,
-        "monitoring_stats": monitoring_stats,
-        "recent_logs": recent_logs
+        "monitoring_stats": monitoring_stats
     })
 
 
