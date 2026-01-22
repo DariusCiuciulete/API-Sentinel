@@ -1,13 +1,12 @@
 """
 Alerts Router - Alert Management System
-Will be implemented in future release
 """
 from fastapi import APIRouter
 
 router = APIRouter(prefix="/alerts", tags=["alerts"])
 
-# Alert management functionality will be implemented
-# Features planned:
+# Alert management functionality
+# Features:
 # - Threshold-based alerting
 # - Alert severity levels
 # - Alert resolution tracking

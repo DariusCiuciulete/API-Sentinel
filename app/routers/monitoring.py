@@ -80,9 +80,6 @@ def check_endpoint(endpoint: Dict) -> Dict:
             error_message=None
         )
         
-        # Check thresholds and create alerts if needed
-        check_thresholds(endpoint_id, response_time_ms, success, config)
-        
         logger.info(f"Monitored {method.upper()} {endpoint['path']}: {response.status_code} ({response_time_ms:.2f}ms)")
         
         return {
@@ -104,14 +101,6 @@ def check_endpoint(endpoint: Dict) -> Dict:
         
         logger.warning(f"Timeout monitoring {endpoint['path']}")
         
-        # Create alert for timeout
-        db.create_alert(
-            endpoint_id=endpoint_id,
-            alert_type="TIMEOUT",
-            severity="warning",
-            message=f"Endpoint timeout: {endpoint['service_name']} - {endpoint['path']}"
-        )
-        
         return {
             "endpoint_id": endpoint_id,
             "success": False,
@@ -130,69 +119,11 @@ def check_endpoint(endpoint: Dict) -> Dict:
         
         logger.error(f"Error monitoring {endpoint['path']}: {error_msg}")
         
-        # Create alert for failure
-        db.create_alert(
-            endpoint_id=endpoint_id,
-            alert_type="FAILURE",
-            severity="danger",
-            message=f"Endpoint check failed: {endpoint['service_name']} - {endpoint['path']}",
-            actual_value=0
-        )
-        
         return {
             "endpoint_id": endpoint_id,
             "success": False,
             "error": error_msg
         }
-
-
-def check_thresholds(endpoint_id: int, response_time_ms: float, success: bool, config: Dict = None):
-    """Check if monitoring results exceed thresholds and create alerts"""
-    if not config:
-        config = db.get_monitoring_config(endpoint_id)
-    
-    if not config:
-        return
-    
-    endpoint = db.get_endpoint_by_id(endpoint_id)
-    
-    # Check latency threshold
-    latency_threshold = config.get('latency_threshold_ms', 1000)
-    if response_time_ms > latency_threshold:
-        db.create_alert(
-            endpoint_id=endpoint_id,
-            alert_type="HIGH_LATENCY",
-            severity="warning",
-            message=f"High latency detected: {endpoint['service_name']} - {endpoint['path']}",
-            threshold_value=latency_threshold,
-            actual_value=response_time_ms
-        )
-    
-    # Check availability (if failed)
-    if not success:
-        db.create_alert(
-            endpoint_id=endpoint_id,
-            alert_type="UNAVAILABLE",
-            severity="danger",
-            message=f"Endpoint unavailable: {endpoint['service_name']} - {endpoint['path']}"
-        )
-    
-    # Check error rate (last 10 checks)
-    recent_results = db.get_monitoring_results(endpoint_id=endpoint_id, limit=10)
-    if len(recent_results) >= 5:  # Only check if we have enough data
-        failed_count = sum(1 for r in recent_results if not r['success'])
-        error_rate = failed_count / len(recent_results)
-        
-        error_threshold = config.get('error_rate_threshold', 0.1)
-        if error_rate > error_threshold:
-            db.create_alert(
-                endpoint_id=endpoint_id,
-                alert_type="HIGH_ERROR_RATE",
-                severity="danger",
-                message=f"High error rate: {endpoint['service_name']} - {endpoint['path']} ({error_rate*100:.1f}%)",
-                threshold_value=error_threshold,
-                actual_value=error_rate
-            )
 
 
 @router.post("/run")

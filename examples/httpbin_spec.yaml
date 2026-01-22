@@ -1,0 +1,126 @@
+openapi: 3.0.0
+info:
+  title: HTTPBin Testing API
+  version: 1.0.0
+  description: Public API for testing HTTP requests with various scenarios
+servers:
+  - url: https://httpbin.org
+paths:
+  /get:
+    get:
+      summary: Simple GET request
+      responses:
+        '200':
+          description: Success
+  
+  /status/200:
+    get:
+      summary: Returns 200 OK
+      responses:
+        '200':
+          description: Success
+  
+  /status/201:
+    get:
+      summary: Returns 201 Created
+      responses:
+        '201':
+          description: Created
+  
+  /status/400:
+    get:
+      summary: Returns 400 Bad Request (error scenario)
+      responses:
+        '400':
+          description: Bad Request
+  
+  /status/500:
+    get:
+      summary: Returns 500 Server Error (failure scenario)
+      responses:
+        '500':
+          description: Server Error
+  
+  /status/503:
+    get:
+      summary: Returns 503 Service Unavailable
+      responses:
+        '503':
+          description: Service Unavailable
+  
+  /delay/1:
+    get:
+      summary: Delays response by 1 second
+      responses:
+        '200':
+          description: Success (after 1s delay)
+  
+  /delay/2:
+    get:
+      summary: Delays response by 2 seconds (slow endpoint)
+      responses:
+        '200':
+          description: Success (after 2s delay)
+  
+  /delay/5:
+    get:
+      summary: Delays response by 5 seconds (very slow)
+      responses:
+        '200':
+          description: Success (after 5s delay)
+  
+  /delay/10:
+    get:
+      summary: Delays response by 10 seconds (timeout test)
+      responses:
+        '200':
+          description: Success (after 10s delay)
+  
+  /uuid:
+    get:
+      summary: Returns a unique UUID
+      responses:
+        '200':
+          description: UUID generated
+  
+  /user-agent:
+    get:
+      summary: Returns your user agent
+      responses:
+        '200':
+          description: User agent info
+  
+  /headers:
+    get:
+      summary: Returns request headers
+      responses:
+        '200':
+          description: Headers echoed back
+  
+  /ip:
+    get:
+      summary: Returns client IP address
+      responses:
+        '200':
+          description: IP address
+  
+  /post:
+    post:
+      summary: Echo POST data
+      responses:
+        '200':
+          description: Posted data echoed back
+  
+  /put:
+    put:
+      summary: Echo PUT data
+      responses:
+        '200':
+          description: Put data echoed back
+  
+  /delete:
+    delete:
+      summary: Echo DELETE request
+      responses:
+        '200':
+          description: Delete confirmed

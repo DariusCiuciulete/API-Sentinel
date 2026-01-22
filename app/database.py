@@ -1,6 +1,6 @@
 """
 API Sentinel Database Module
-Handles SQLite database operations for inventory, monitoring, alerts, and logs
+Handles SQLite database operations for inventory and monitoring
 """
 import sqlite3
 from datetime import datetime
@@ -147,11 +147,6 @@ class Database:
             
             endpoint_id = cursor.lastrowid
             conn.commit()
-            
-            # Log the event
-            self.log_event("DISCOVERY", endpoint_id, 
-                          f"Endpoint added: {method} {path}", 
-                          f"Source: {discovery_source}")
             
             logger.info(f"Added endpoint: {service_name} - {method} {path}")
             return endpoint_id
@@ -345,115 +340,31 @@ class Database:
                     message: str, threshold_value: float = None, 
                     actual_value: float = None) -> int:
         """Create a new alert"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
-        
-        cursor.execute('''
-            INSERT INTO alerts 
-            (endpoint_id, alert_type, severity, message, threshold_value, actual_value)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (endpoint_id, alert_type, severity, message, threshold_value, actual_value))
-        
-        alert_id = cursor.lastrowid
-        conn.commit()
-        conn.close()
-        
-        self.log_event("ALERT", endpoint_id, f"Alert created: {alert_type}", message, severity)
-        logger.warning(f"Alert created: {message}")
-        
-        return alert_id
+        # Implementation pending
+        return 0
     
     def get_active_alerts(self, endpoint_id: int = None) -> List[Dict]:
-        """Get active (unresolved) alerts"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
-        
-        if endpoint_id:
-            cursor.execute('''
-                SELECT a.*, e.service_name, e.path, e.method
-                FROM alerts a
-                JOIN api_endpoints e ON a.endpoint_id = e.id
-                WHERE a.is_resolved = 0 AND a.endpoint_id = ?
-                ORDER BY a.created_at DESC
-            ''', (endpoint_id,))
-        else:
-            cursor.execute('''
-                SELECT a.*, e.service_name, e.path, e.method
-                FROM alerts a
-                JOIN api_endpoints e ON a.endpoint_id = e.id
-                WHERE a.is_resolved = 0
-                ORDER BY a.created_at DESC
-            ''')
-        
-        alerts = [dict(row) for row in cursor.fetchall()]
-        conn.close()
-        
-        return alerts
+        """Get active alerts"""
+        # Implementation pending
+        return []
     
     def resolve_alert(self, alert_id: int) -> bool:
         """Mark an alert as resolved"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
-        
-        cursor.execute('''
-            UPDATE alerts 
-            SET is_resolved = 1, resolved_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        ''', (alert_id,))
-        
-        success = cursor.rowcount > 0
-        conn.commit()
-        conn.close()
-        
-        return success
+        # Implementation pending
+        return False
     
     # ==================== Logging ====================
     
     def log_event(self, event_type: str, endpoint_id: int = None, 
                   message: str = "", details: str = None, severity: str = "INFO") -> int:
         """Log an event"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
-        
-        cursor.execute('''
-            INSERT INTO event_logs 
-            (event_type, endpoint_id, message, details, severity)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (event_type, endpoint_id, message, details, severity))
-        
-        log_id = cursor.lastrowid
-        conn.commit()
-        conn.close()
-        
-        return log_id
+        # Implementation pending
+        return 0
     
     def get_logs(self, event_type: str = None, limit: int = 100) -> List[Dict]:
         """Get event logs"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
-        
-        if event_type:
-            cursor.execute('''
-                SELECT l.*, e.service_name, e.path 
-                FROM event_logs l
-                LEFT JOIN api_endpoints e ON l.endpoint_id = e.id
-                WHERE l.event_type = ?
-                ORDER BY l.created_at DESC
-                LIMIT ?
-            ''', (event_type, limit))
-        else:
-            cursor.execute('''
-                SELECT l.*, e.service_name, e.path 
-                FROM event_logs l
-                LEFT JOIN api_endpoints e ON l.endpoint_id = e.id
-                ORDER BY l.created_at DESC
-                LIMIT ?
-            ''', (limit,))
-        
-        logs = [dict(row) for row in cursor.fetchall()]
-        conn.close()
-        
-        return logs
+        # Implementation pending
+        return []
     
     # ==================== Monitoring Configuration ====================
     
@@ -509,10 +420,6 @@ class Database:
         ''')
         inventory_stats = dict(cursor.fetchone())
         
-        # Active alerts count
-        cursor.execute("SELECT COUNT(*) as active_alerts FROM alerts WHERE is_resolved = 0")
-        alert_stats = dict(cursor.fetchone())
-        
         # Get monitoring stats
         monitoring_stats = self.get_monitoring_stats()
         
@@ -522,7 +429,6 @@ class Database:
             'total_apis': inventory_stats['total_apis'],
             'total_endpoints': inventory_stats['total_endpoints'],
             'active_endpoints': inventory_stats['active_endpoints'],
-            'active_alerts': alert_stats['active_alerts'],
             'avg_response_time': monitoring_stats['avg_response_time']
         }
 

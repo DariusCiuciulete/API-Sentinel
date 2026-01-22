@@ -165,7 +165,6 @@ async def export_inventory():
         output.seek(0)
         
         logger.info("Inventory exported to CSV")
-        db.log_event("EXPORT", None, "Inventory exported to CSV")
         
         return StreamingResponse(
             iter([output.getvalue()]),
@@ -189,12 +188,8 @@ async def get_endpoint_details(request: Request, endpoint_id: int):
     # Get monitoring results for this endpoint
     monitoring_results = db.get_monitoring_results(endpoint_id=endpoint_id, limit=50)
     
-    # Get alerts for this endpoint
-    alerts = db.get_active_alerts(endpoint_id=endpoint_id)
-    
     return templates.TemplateResponse("endpoint_detail.html", {
         "request": request,
         "endpoint": endpoint,
-        "monitoring_results": monitoring_results,
-        "alerts": alerts
+        "monitoring_results": monitoring_results
     })

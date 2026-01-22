@@ -35,7 +35,6 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 # Import and include routers
 from app.routers import inventory, discovery, monitoring
-# Alerts and Logs modules will be added in future release
 
 app.include_router(inventory.router)
 app.include_router(discovery.router)
